@@ -118,6 +118,13 @@ smarvus_sussex_scored <- smarvus_sussex_scored %>%
 
 ```
 
+```{r}
+cat("Summary stats")
+summary(smarvus_sussex_scored$stars_score)
+hist(smarvus_sussex_scored$stars_score)
+```
+
+
 ## Grades
 
 The dataset includes various columns with `grade` at the start of their name, giving details of the student's eventual grade on the statistics module that they were taking at the time of completing the survey.
