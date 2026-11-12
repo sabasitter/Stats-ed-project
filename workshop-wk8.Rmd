@@ -84,9 +84,9 @@ sum(smarvus_m$Q8.1_21 == "5")
 
 ```{r Q1 (b)}
 smarvus_sussex_filtered <- smarvus_sussex |>
-  filter(attention_amnesty == "Yes", Q7.1_24 == "1", Q8.1_21 == "5", Q9.1_22 == "1", Q11.1_9 == "3", Q13.1_17 =="2", Q15.1_9 == "4" )
+  filter(attention_amnesty == "Yes", Q7.1_24 == "1", Q8.1_21 == "5")
 
-nrow(smarvus_passed)
+nrow(smarvus_sussex_filtered)
 ```
 
 ## Scoring STARS
