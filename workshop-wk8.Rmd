@@ -1,6 +1,6 @@
 ---
 title: 'Statistics in Education: Workshop Wk8'
-author: "Saba Sitter"
+author: "Saba Sitter, Nina Beadnell"
 date: "2026-11-10"
 output: html_document
 ---
