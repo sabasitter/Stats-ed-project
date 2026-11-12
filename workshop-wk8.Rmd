@@ -74,21 +74,19 @@ Those numbers are for the full dataset. For the Sussex subset, you should find t
 
 (b) Produce a filtered dataset `smarvus_sussex_filtered` with only responses that passed ALL attention checks. It should contain 375 responses.
 
-```{r}
+```{r Q1 (a)}
 #CHECKS
-smarvus_am <- smarvus_sussex |>
-  filter(!is.na(attention_amnesty))
-
-smarvus_star <- smarvus_sussex |>
-  filter(!is.na(Q7.1_24)) 
-  
-smarvus_m <- smarvus_sussex |>
-  filter(!is.na(Q8.1_21)) 
-  
 sum(smarvus_am$attention_amnesty == "Yes")
 sum(smarvus_star$Q7.1_24 == "1")
 sum(smarvus_m$Q8.1_21 == "5")
+```
 
+
+```{r Q1 (b)}
+smarvus_sussex_filtered <- smarvus_sussex |>
+  filter(attention_amnesty == "Yes", Q7.1_24 == "1", Q8.1_21 == "5", Q9.1_22 == "1", Q11.1_9 == "3", Q13.1_17 =="2", Q15.1_9 == "4" )
+
+nrow(smarvus_passed)
 ```
 
 ## Scoring STARS
