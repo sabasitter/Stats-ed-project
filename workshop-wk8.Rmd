@@ -104,6 +104,17 @@ The overall score for STARS comes from adding up the 23 responses, so scores sho
 (b) Produce some summary statistics for the STARS scores, and a visualisation of the distribution. (You should find that the mean STARS score in this sample is 70.189.)
 
 ```{r}
+library(dplyr)
+
+smarvus_sussex_scored <- smarvus_sussex_filtered
+
+#add a column that sums up the entries in each row from columns Q7.1_1 to Q7.1_23
+df_stars <- smarvus_sussex_scored %>% 
+  select(contains("Q7.1_")) %>% 
+  select(-contains("Q7.1_24"))
+
+smarvus_sussex_scored <- smarvus_sussex_scored %>% 
+  mutate(stars_score =  rowSums(df_stars))
 
 ```
 
