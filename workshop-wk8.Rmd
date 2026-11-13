@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(arrow); library(tidyverse); library(lubridate) ; library(dplyr)
+library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; library(easystats)
 
 # set the default plot style
 theme_set(theme_minimal())
@@ -187,8 +187,13 @@ scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_filtered$grade)
 smarvus_sussex_scored <- smarvus_sussex_scored|>
   filter(!is.na(stars_score))
 
-cor <- cor.test(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$grade)
-cor
+cor_result <- cor.test(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$grade)
+cor_result
+```
+
+```{r}
+# (c) correlation to d 
+effectsize::r_to_d(r=cor_result$estimate)
 ```
 
 ## Relationship between prior mathematics study and grades
