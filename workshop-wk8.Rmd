@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(arrow); library(tidyverse); library(lubridate)
+library(arrow); library(tidyverse); library(lubridate) ; library(dplyr)
 
 # set the default plot style
 theme_set(theme_minimal())
@@ -137,12 +137,19 @@ Clean the `grade` data, producing a true numerical value for each student where 
 Just as you did for the STARS scores, produce some summary statistics and a visualisation of the grade distribution.
 
 ```{r}
-smarvus_sussex_filtered -> smarvus_sussex_filtered |>
-   filter(!is.na(grade)) |>
-   (grade) |>
-   mutate(grade = as.numeric(sub("%", "", grade)))
-  
+smarvus_sussex_filtered <- smarvus_sussex_filtered |>
+  filter(!is.na(grade)) |>
+  mutate(grade = as.numeric(sub("%", "", grade))) 
  
+#visualise distribution
+hist(smarvus_sussex_filtered$grade)
+
+# summary statistics: mean and std
+mean_grade <- mean(smarvus_sussex_filtered$grade)
+std_grade <- sd(smarvus_sussex_filtered$grade)
+
+print(mean_grade)
+print(std_grade)
 ```
 
 ## Relationship between anxiety and grades
