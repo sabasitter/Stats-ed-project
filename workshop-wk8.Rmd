@@ -9,7 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; library(easystats)
-
 # set the default plot style
 theme_set(theme_minimal())
 ```
@@ -152,7 +151,8 @@ smarvus_sussex_scored <- smarvus_sussex_scored |>
   mutate(grade = as.numeric(sub("%", "", grade))) 
  
 #visualise distribution
-hist(smarvus_sussex_scored$grade)
+hist(smarvus_sussex_scored$grade,
+     col=(c("indianred1")))
 
 # summary statistics: mean and std
 mean_grade <- mean(smarvus_sussex_scored$grade)
@@ -177,7 +177,7 @@ You should now be in a position to make a first attempt at addressing the overal
 
 ```{r}
 # (a) scatter plot STARS_score vs grades
-scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_filtered$grade)
+scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$grade)
 
 
 ```
@@ -208,16 +208,31 @@ Purely for the purposes of practicing computing a Cohen's d effect size, we will
 
 (b) Focus on the GCSE and A-Level groups. Compare the mean performance (`grade`) of the students in these two groups: produce a visualisation, and compute the standardised mean difference (Cohen's d). How does this compare to the d from Task 4?
 
+People with a levels do better than people with GCSE
+
 ```{r}
 #summary of the values of 'math_edu_level'
-ed_level <- table(smarvus_sussex_filtered$math_edu_level)
+ed_level <- table(smarvus_sussex_scored$math_edu_level)
 ed_level
 
-smarvus_sussex_filtered_exams <- smarvus_sussex_filtered %>% filter (math_edu_level == "GCSE" | math_edu_level == "A Level")
+smarvus_sussex_scored_exams <- smarvus_sussex_scored %>% filter (math_edu_level == "GCSE" | math_edu_level == "A Level")
 
-boxplot(grade~math_edu_level, data=smarvus_sussex_filtered_exams, 
+boxplot(grade~math_edu_level, data=smarvus_sussex_scored_exams, 
   col=(c("indianred1","lightblue2")),
   main="Exam performance by education level", xlab="Education level")
+
+
+#correlation and cohens d
+
+smarvus_sussex_scored_exams$math_edu_level <- factor(smarvus_sussex_scored_exams$math_edu_level, levels =c("GCSE", "A Level"))
+
+cor_result <- cor.test(
+  as.numeric(smarvus_sussex_scored_exams$math_edu_level), 
+  as.numeric(smarvus_sussex_scored_exams$grade)
+)
+cor_result
+
+effectsize::r_to_d(r=cor_result$estimate)
 
 ```
 
