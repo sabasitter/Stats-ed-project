@@ -236,7 +236,16 @@ One of the goals of the SMARVUS project was to investigate the relationship betw
 Compute the participants' scores for at least one of the other measures (or all three if you like), and investigate the correlation with STARS.
 
 ```{r}
+df_rmars_s <- smarvus_sussex_scored %>%
+  select(Q7.2_1:Q7.2_19, Q8.2_11)
 
+smarvus_sussex_scored <- smarvus_sussex_scored %>%
+  mutate(rmars_s_score =  rowSums(df_rmars_s))
+
+#correlation 
+
+stars_v_rmars_s <- cor.test(smarvus_sussex_scored$rmars_s_score, smarvus_sussex_scored$stars_score)
+print(stars_v_rmars_s)
 ```
 
 ## Going further with the data
