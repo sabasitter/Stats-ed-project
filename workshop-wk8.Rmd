@@ -137,17 +137,11 @@ Clean the `grade` data, producing a true numerical value for each student where 
 Just as you did for the STARS scores, produce some summary statistics and a visualisation of the grade distribution.
 
 ```{r}
-<<<<<<< HEAD
-smarvus_sussex_filtered <- 
-
-=======
 smarvus_sussex_filtered -> smarvus_sussex_filtered |>
    filter(!is.na(grade)) |>
-   (grade) |>
    mutate(grade = as.numeric(sub("%", "", grade)))
-  
- 
->>>>>>> d1ddcd7484618f604341aee10e6efa58d8ba8b4a
+
+
 ```
 
 ## Relationship between anxiety and grades
