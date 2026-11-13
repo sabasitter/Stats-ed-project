@@ -131,6 +131,7 @@ Clean the `grade` data, producing a true numerical value for each student where 
 Just as you did for the STARS scores, produce some summary statistics and a visualisation of the grade distribution.
 
 ```{r}
+smarvus_sussex_filtered <- 
 
 ```
 
