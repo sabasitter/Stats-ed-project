@@ -130,7 +130,8 @@ smarvus_sussex_scored <- smarvus_sussex_scored %>%
 cat("Summary stats")
 summary(smarvus_sussex_scored$stars_score)
 hist(smarvus_sussex_scored$stars_score,
-     col=(c("lightblue2")))
+     col=(c("lightblue2")),
+     main="Statistical Anxiety", xlab="Range of Anxiety")
 ```
 
 
@@ -153,7 +154,8 @@ smarvus_sussex_scored <- smarvus_sussex_scored |>
  
 #visualise distribution
 hist(smarvus_sussex_scored$grade,
-     col=(c("indianred1")))
+     col=(c("indianred1")),
+     main="Range of Grades Achieved", xlab="Grades Achieved")
 
 # summary statistics: mean and std
 mean_grade <- mean(smarvus_sussex_scored$grade)
@@ -179,7 +181,8 @@ You should now be in a position to make a first attempt at addressing the overal
 ```{r}
 # (a) scatter plot STARS_score vs grades
 scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$grade,
-               col=(c("indianred1")))
+               col=(c("indianred1")),
+               main="Grades Achieved Against Statistical Anxiety", xlab="Statistical Anxiety Measured", ylab="Grades Achieved")
 
 
 ```
