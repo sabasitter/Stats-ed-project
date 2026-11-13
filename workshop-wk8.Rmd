@@ -9,7 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; library(easystats)
-
 # set the default plot style
 theme_set(theme_minimal())
 ```
@@ -152,7 +151,8 @@ smarvus_sussex_scored <- smarvus_sussex_scored |>
   mutate(grade = as.numeric(sub("%", "", grade))) 
  
 #visualise distribution
-hist(smarvus_sussex_scored$grade)
+hist(smarvus_sussex_scored$grade,
+     col=(c("indianred1")))
 
 # summary statistics: mean and std
 mean_grade <- mean(smarvus_sussex_scored$grade)
