@@ -177,7 +177,7 @@ You should now be in a position to make a first attempt at addressing the overal
 
 ```{r}
 # (a) scatter plot STARS_score vs grades
-
+scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_filtered$grade)
 
 
 ```
