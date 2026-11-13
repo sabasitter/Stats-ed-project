@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(arrow); library(tidyverse); library(lubridate) ; library(dplyr)
+library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; library(easystats)
 
 # set the default plot style
 theme_set(theme_minimal())
@@ -147,16 +147,16 @@ Clean the `grade` data, producing a true numerical value for each student where 
 Just as you did for the STARS scores, produce some summary statistics and a visualisation of the grade distribution.
 
 ```{r}
-smarvus_sussex_filtered <- smarvus_sussex_filtered |>
+smarvus_sussex_scored <- smarvus_sussex_scored |>
   filter(!is.na(grade)) |>
   mutate(grade = as.numeric(sub("%", "", grade))) 
  
 #visualise distribution
-hist(smarvus_sussex_filtered$grade)
+hist(smarvus_sussex_scored$grade)
 
 # summary statistics: mean and std
-mean_grade <- mean(smarvus_sussex_filtered$grade)
-std_grade <- sd(smarvus_sussex_filtered$grade)
+mean_grade <- mean(smarvus_sussex_scored$grade)
+std_grade <- sd(smarvus_sussex_scored$grade)
 
 print(mean_grade)
 print(std_grade)
@@ -177,9 +177,23 @@ You should now be in a position to make a first attempt at addressing the overal
 
 ```{r}
 # (a) scatter plot STARS_score vs grades
+scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_filtered$grade)
 
 
+```
 
+```{r}
+# (b) correlation
+smarvus_sussex_scored <- smarvus_sussex_scored|>
+  filter(!is.na(stars_score))
+
+cor_result <- cor.test(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$grade)
+cor_result
+```
+
+```{r}
+# (c) correlation to d 
+effectsize::r_to_d(r=cor_result$estimate)
 ```
 
 ## Relationship between prior mathematics study and grades
