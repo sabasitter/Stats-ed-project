@@ -150,6 +150,7 @@ std_grade <- sd(smarvus_sussex_filtered$grade)
 
 print(mean_grade)
 print(std_grade)
+
 ```
 
 ## Relationship between anxiety and grades
@@ -165,6 +166,9 @@ You should now be in a position to make a first attempt at addressing the overal
 (c) Use `effectsize::r_to_d` (as demonstrated in the week 8 lecture) to express the correlation as a Cohen's d effect size.
 
 ```{r}
+# (a) scatter plot STARS_score vs grades
+
+
 
 ```
 
