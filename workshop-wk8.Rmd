@@ -195,7 +195,7 @@ Purely for the purposes of practicing computing a Cohen's d effect size, we will
 (b) Focus on the GCSE and A-Level groups. Compare the mean performance (`grade`) of the students in these two groups: produce a visualisation, and compute the standardised mean difference (Cohen's d). How does this compare to the d from Task 4?
 
 ```{r}
-
+hi
 ```
 
 ## Relationship between anxiety measures
