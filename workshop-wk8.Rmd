@@ -195,6 +195,15 @@ Purely for the purposes of practicing computing a Cohen's d effect size, we will
 (b) Focus on the GCSE and A-Level groups. Compare the mean performance (`grade`) of the students in these two groups: produce a visualisation, and compute the standardised mean difference (Cohen's d). How does this compare to the d from Task 4?
 
 ```{r}
+#summary of the values of 'math_edu_level'
+ed_level <- table(smarvus_sussex_filtered$math_edu_level)
+ed_level
+
+smarvus_sussex_filtered_exams <- smarvus_sussex_filtered %>% filter (math_edu_level == "GCSE" | math_edu_level == "A Level")
+
+boxplot(grade~math_edu_level, data=smarvus_sussex_filtered_exams, 
+  col=(c("indianred1","lightblue2")),
+  main="Exam performance by education level", xlab="Education level")
 
 ```
 
