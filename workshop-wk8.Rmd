@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse)
+library(arrow); library(tidyverse); library(lubridate)
 
 # set the default plot style
 theme_set(theme_minimal())
@@ -76,9 +76,19 @@ Those numbers are for the full dataset. For the Sussex subset, you should find t
 
 ```{r Q1 (a)}
 #CHECKS
+smarvus_am <- smarvus_sussex |>
+  filter(!is.na(attention_amnesty))
+
+smarvus_star <- smarvus_sussex |>
+  filter(!is.na(Q7.1_24))
+
+smarvus_m <- smarvus_sussex |>
+  filter(!is.na(Q8.1_21))
+
 sum(smarvus_am$attention_amnesty == "Yes")
 sum(smarvus_star$Q7.1_24 == "1")
 sum(smarvus_m$Q8.1_21 == "5")
+
 ```
 
 
@@ -104,19 +114,15 @@ The overall score for STARS comes from adding up the 23 responses, so scores sho
 (b) Produce some summary statistics for the STARS scores, and a visualisation of the distribution. (You should find that the mean STARS score in this sample is 70.189.)
 
 ```{r}
-library(dplyr)
-
-smarvus_sussex_scored <- smarvus_sussex_filtered
-
-#add a column that sums up the entries in each row from columns Q7.1_1 to Q7.1_23
-df_stars <- smarvus_sussex_scored %>% 
-  select(contains("Q7.1_")) %>% 
-  select(-contains("Q7.1_24"))
-
-smarvus_sussex_scored <- smarvus_sussex_scored %>% 
-  mutate(stars_score =  rowSums(df_stars))
 
 ```
+
+```{r}
+cat("Summary stats")
+summary(smarvus_sussex_scored$stars_score)
+hist(smarvus_sussex_scored$stars_score)
+```
+
 
 ## Grades
 
@@ -131,8 +137,17 @@ Clean the `grade` data, producing a true numerical value for each student where 
 Just as you did for the STARS scores, produce some summary statistics and a visualisation of the grade distribution.
 
 ```{r}
+<<<<<<< HEAD
 smarvus_sussex_filtered <- 
 
+=======
+smarvus_sussex_filtered -> smarvus_sussex_filtered |>
+   filter(!is.na(grade)) |>
+   (grade) |>
+   mutate(grade = as.numeric(sub("%", "", grade)))
+  
+ 
+>>>>>>> d1ddcd7484618f604341aee10e6efa58d8ba8b4a
 ```
 
 ## Relationship between anxiety and grades
