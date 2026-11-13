@@ -251,16 +251,45 @@ One of the goals of the SMARVUS project was to investigate the relationship betw
 Compute the participants' scores for at least one of the other measures (or all three if you like), and investigate the correlation with STARS.
 
 ```{r}
+# R_MARS
+df_rmars <- smarvus_sussex_scored %>%
+  select(Q8.2_1:Q8.2_20)
+
+smarvus_sussex_scored <- smarvus_sussex_scored %>%
+  mutate(rmars_score =  rowSums(df_rmars))
+
+
+
+# STARS-M
+df_stars_m <- smarvus_sussex_scored %>%
+  select(Q7.1_9, Q7.1_12, Q7.1_17, Q8.1_1:Q8.1_20)
+
+smarvus_sussex_scored <- smarvus_sussex_scored %>%
+  mutate(stars_m_score =  rowSums(df_stars_m))
+
+
+
+# R-MARS-S
 df_rmars_s <- smarvus_sussex_scored %>%
   select(Q7.2_1:Q7.2_19, Q8.2_11)
 
 smarvus_sussex_scored <- smarvus_sussex_scored %>%
   mutate(rmars_s_score =  rowSums(df_rmars_s))
 
-#correlation 
 
-stars_v_rmars_s <- cor.test(smarvus_sussex_scored$rmars_s_score, smarvus_sussex_scored$stars_score)
-print(stars_v_rmars_s)
+
+# correlation R-MARS and R-MARS-S
+rmars_v_rmars_s <- cor.test(smarvus_sussex_scored$rmars_score, smarvus_sussex_scored$rmars_s_score)
+print(rmars_v_rmars_s)
+
+# correlation STAR and STAR-M
+stars_v_star_m <- cor.test(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$stars_m_score)
+print(stars_v_star_m)
+
+# Scatter plot R-MARS and R-MARS-S
+scatter.smooth(smarvus_sussex_scored$rmars_score, smarvus_sussex_scored$rmars_s_score)
+# Scatter plot STAR and STAR-M
+scatter.smooth(smarvus_sussex_scored$stars_score, smarvus_sussex_scored$stars_m_score)
 ```
 
 ## Going further with the data
