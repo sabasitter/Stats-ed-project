@@ -14,7 +14,7 @@ theme_set(theme_minimal())
 
 ## Removing entries without official grade reported
 
-```{r}
+```{r Cleaning data}
 # to download the full 68MB dataset, you can use:
 smarvus_raw <- read_csv("https://osf.io/download/a4zmv/")
 
@@ -48,7 +48,7 @@ smarvus_grades_only <- data.frame(
 smarvus_grades_only
 ```
 
-```{r}
+```{r Defining grade conversions}
 # ==================================
 # brawijaya conversion
 # taking the mid point of the grade band
@@ -77,7 +77,7 @@ brawijaya_converstion <- c(
 limerik_converstion <- c(
   "A1"  = 90, "A2" = 77, 
   "B1"  = 73, "B2" = 67, "B3" = 62,
-  "C1" = 57, "C2"  = 52, "C3" = 47
+  "C1" = 57, "C2"  = 52, "C3" = 47,
   "D1" = 42, "D2"  = 37,
   "F"  = 17.5     
 )
@@ -89,7 +89,7 @@ limerik_converstion <- c(
 mef_converstion <- c(
   "A"  = 95, "A-" = 84.5, 
   "B+"  = 77, "B" = 72, "B-" = 67,
-  "C+" = 62, "C"  = 57, "C-" = 52
+  "C+" = 62, "C"  = 57, "C-" = 52,
   "D+" = 47, "D"  = 39.5,
   "F"  = 17.5     
 )
@@ -113,7 +113,7 @@ mef_converstion <- c(
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-```{r}
+```{r Standardising grades in df}
 # Standardizing grades to be out of 100 (eg 98.10 or 36.75)
 standardise_grade <- function(df) {df %>%
   mutate(
