@@ -18,6 +18,8 @@ theme_set(theme_minimal())
 # to download the full 68MB dataset, you can use:
 smarvus_raw <- read_csv("https://osf.io/download/a4zmv/")
 
+### This bit can be replaced with saba's cleaned df once ready
+# ============================================================
 # Identifying names of no grade recorded
 unique(smarvus_raw$grade)
 
@@ -32,8 +34,9 @@ smarvus_raw <- smarvus_raw |>
     "No access to transcript",
     "-"
   ))
+# ============================================================
 
-# Prints all the ways people have inputted the grade
+# Prints all the ways people have inputed the grade
 unique(smarvus_raw$grade)
 
 # Prints all the grade conversions
@@ -48,12 +51,13 @@ smarvus_grades_only <- data.frame(
 smarvus_grades_only
 ```
 
-```{r Defining grade conversions}
+```{r Defining grade bands}
+# In all cases grade assigned is by taking the mid point of the grade band
+
 # ==================================
 # brawijaya conversion
-# taking the mid point of the grade band
 # "A > 80, 75 < B+ ≤ 80, 69 < B ≤ 75, 60 < C+ ≤ 69, 55 < C ≤ 60, 50 < D+ ≤ 55, 44 < D ≤ 50, E < 44"     
-brawijaya_converstion <- c(
+brawijaya_conversion <- c(
   "A"  = 90,
   "B+" = 77.5, "B"  = 72,
   "C+" = 64.5, "C"  = 57.5,
@@ -62,52 +66,61 @@ brawijaya_converstion <- c(
 )
 # ==================================
 # hungary conversion
-# No info give- research (seaminly out of 5)
+# **No info given**
+# found from University of Debrecen, https://eng.unideb.hu/en/grading-system-hungary-university-debrecen 
+hungary_conversion <- c(
+  "5" = 95,
+  "4" = 84.5,
+  "3" = 74.5,
+  "2" = 64.5,
+  "1" = 29.5
+)
 
 # ==================================
 # la_laguna
-# No info give- research
-# first round to 1dp to get control entries like 9.99999999
+# **No info given**
 
 # ==================================
 # limerik
 # taking the mid point of the grade band
 # ">80 = A1, 75-79 = A2, 70-74 = B1, 65-69 = B2, 60-64 = B3, 55-59 = C1, 50-54 = C2, 45-49 = C3,
 # 40-44 = D1, 35-39 = D2, <35 = F
-limerik_converstion <- c(
+limerick_conversion <- c(
   "A1"  = 90, "A2" = 77, 
   "B1"  = 73, "B2" = 67, "B3" = 62,
   "C1" = 57, "C2"  = 52, "C3" = 47,
   "D1" = 42, "D2"  = 37,
   "F"  = 17.5     
 )
+
 # ==================================
 # mef
 # taking the mid point of the grade band
 # "A = 90-100, A- = 80-89, B+ = 75-79, B = 70-74, B- = 65-69; C+ = 60-64, C = 55-59, C- = 50-54, 
 # D+ = 45-49, D = 35-44, F <35"   
-mef_converstion <- c(
+mef_conversion <- c(
   "A"  = 95, "A-" = 84.5, 
   "B+"  = 77, "B" = 72, "B-" = 67,
   "C+" = 62, "C"  = 57, "C-" = 52,
   "D+" = 47, "D"  = 39.5,
   "F"  = 17.5     
 )
+
 # ==================================
 # rotterdam 
-# No info give- research (maybe just X10?)
+# **No info given**
 
 # ==================================
 # uc_louvain
-# No info give- research (maybe out of 20?)
+# **No info given**
 
 # ==================================
 # vienna
-# No info give- research (seaminly out of 5)
+# **No info given**
 
 # ==================================
 # york_can
-# No info give- research (sometime 2 letter grades given)
+# **No info given**
 
 ```
 
@@ -119,19 +132,50 @@ standardise_grade <- function(df) {df %>%
   mutate(
     grade = as.character(grade),
     grade_std = case_when(
-      # Grades with "%" in them (anglia_ruskin and sussex)
+      # anglia_ruskin and sussex: Grades with "%" in them
       survey_id %in% c("anglia_ruskin", "sussex") ~
         suppressWarnings(as.numeric(sub("%", "", grade))),
 
-      # brawijaya conversion (letter to numeric)
-      survey_id == "brawijaya" ~
-        unname(brawijaya_conversion[toupper(trimws(grade))]),
+      # brawijaya conversion
+      survey_id %in% "brawijaya" ~
+        unname(brawijaya_conversion[grade]),
+      
+      # hungary conversion
+      survey_id %in% "hungary" ~
+        unname(hungary_conversion[grade]),
+      
+      # la_laguna
+      # update once found reputable conversion
+      
+      # limerick
+      survey_id %in% "limerick" ~
+        unname(limerick_conversion[grade]),
+      
+      # mef
+      survey_id %in% "mef" ~
+        unname(mef_conversion[grade]),  
+      
+      # rotterdam 
+      # update once found reputable conversion
 
-      # Anything not covered yet
-      TRUE ~ NA_real_
+      # uc_louvain
+      # update once found reputable conversion
+      
+      # vienna
+      # update once found reputable conversion
+      
+      # york_can
+      # update once found reputable conversion
+
     )
   )
 }
+
+# Once got saba's final cleaned code run it through the function
+# ================================================================
+final_standardised_grade <- standardise_grade(smarvus_grades_only)
+# ================================================================
+
 ```
 
 
