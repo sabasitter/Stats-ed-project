@@ -31,7 +31,7 @@ The dataset was then further filtered by excluding the 70 respondents who did no
 ```{r, echo=FALSE, out.width="40%", fig.align="center"}
 knitr::include_graphics("country_table.png")
 ```
-**Table 1.** Distribution of respondents by country and survey language.
+**Table 1.** Distribution of filtered respondents by country and survey language.
 
 # Details of the analysis
 This is the main body of the report, which should make clear how you arrived at the values quoted in the
