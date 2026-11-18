@@ -1,3 +1,5 @@
+## 1. Packages and setup --------------------------------------------------
+
 # Packages
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -6,6 +8,8 @@ library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; librar
 # set the default plot style
 theme_set(theme_minimal())
 
+
+## 2. Loading and cleaning data ------------------------------------------
 
 # Load data
 #Downloading dataset with relevant columns only
@@ -46,6 +50,9 @@ smarvus_filtered <- smarvus_filtered |>
     country
   ))
 
+
+## 3. Attention checks ---------------------------------------------------
+
 before <- nrow(smarvus_filtered)
 
 smarvus_filtered <- smarvus_filtered |>
@@ -66,6 +73,8 @@ before - nrow(smarvus_filtered)
 nrow(smarvus_filtered)
 
 
+## 4. Geographical distribution of respondents ---------------------------
+
 #Finding the number of responses by uni, with the language and creating a table on it 
 country_table <- smarvus_filtered |>
   count(country, language, sort = TRUE) |>
@@ -84,6 +93,9 @@ country_table
 gtsave(country_table, "country_table.png")
 
 #===============================================================================================
+
+
+## 5. Identifying university grading systems -----------------------------
 
 #Finding the grading convention by uni and creating a table
 
@@ -111,6 +123,9 @@ grade_table
 
 gtsave(grade_table, "grade_table.png")
 
+
+## 6. Summary of the filtered dataset ------------------------------------
+
 smarvus_filtered |>
   summarise(
     students = n(),
@@ -118,6 +133,9 @@ smarvus_filtered |>
     countries = n_distinct(country, na.rm = TRUE),
     languages = n_distinct(language, na.rm = TRUE)
   )
+
+
+## 7. Calculating anxiety scores -----------------------------------------
 
 # STARS
 stars_cols <- paste0("Q7.1_", 1:23)
@@ -146,6 +164,9 @@ smarvus_filtered <- smarvus_filtered |>
     rmars_s_score = rowSums(pick(all_of(rmars_s_cols)))
   )
 
+
+## 8. Preliminary analysis: University of Sussex ------------------------
+
 # Extract Sussex responses
 smarvus_sussex <- smarvus_filtered |>
   filter(university == "University of Sussex")
@@ -156,6 +177,9 @@ nrow(smarvus_sussex)
 # Making the grade interpretable as a numeric value
 smarvus_sussex <- smarvus_sussex |>
   mutate(grade = as.numeric(sub("%", "", grade)))
+
+
+## 8.1 Exploratory data analysis -----------------------------------------
 
 #Calculating summary statistics
 sussex_summary <- smarvus_sussex |>
@@ -197,6 +221,9 @@ smarvus_sussex |> count(degree_level_maths)
 
 summary(smarvus_sussex$age)
 
+
+## 8.2 Relationship between anxiety and attainment ----------------------
+
 # Seeing relationship between anxiety and attainment
 ggplot(smarvus_sussex,
        aes(x = stars_score, y = grade)) +
@@ -209,6 +236,9 @@ ggplot(smarvus_sussex,
   ) +
   theme_minimal()
 
+
+## 8.3 Correlation and effect size ---------------------------------------
+
 # Correlation and effect size
 cor_result <- cor.test(
   smarvus_sussex$stars_score,
@@ -218,3 +248,10 @@ cor_result <- cor.test(
 cor_result
 
 effectsize::r_to_d(r = cor_result$estimate)
+
+
+## 9. Extending the analysis across universities -------------------------
+
+
+
+## 10. Meta-analysis ----------------------------------------------------
