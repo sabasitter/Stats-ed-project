@@ -132,6 +132,12 @@ summary(smarvus_sussex_scored$stars_score)
 hist(smarvus_sussex_scored$stars_score,
      col=(c("lightblue2")),
      main="Distribution of Statistical Anxiety", xlab="Range of Anxiety")
+
+dev.print( device = jpeg,              # what are we printing to?
+            filename = "dist_stats_anxiety.jpg",  # name of the image file
+            width = 480,                # how many pixels wide should it be
+            height = 300                # how many pixels high should it be
+ )
 ```
 
 
