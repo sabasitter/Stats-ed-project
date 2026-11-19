@@ -73,36 +73,39 @@ nrow(smarvus_filtered)
 
 
 ```
-## Removing entries without official grade reported
 
-```{r Cleaning data}
-# to download the full 68MB dataset, you can use:
-smarvus_raw <- read_csv("https://osf.io/download/a4zmv/")
+```{r Stats anxiety score}
+# STARS
+stars_cols <- paste0("Q7.1_", 1:23)
 
-### This bit can be replaced with saba's cleaned df once ready
-# ============================================================
-# Identifying names of no grade recorded
-unique(smarvus_raw$grade)
+# R-MARS
+rmars_cols <- paste0("Q8.2_", 1:20)
 
-# Remove participants with no reportes Grade Data
-smarvus_raw <- smarvus_raw |>
-  filter(!grade %in% c(
-    "Not Available", 
-    NA, 
-    "Non complete - LoA", 
-    "No stats module on record", 
-    "No stats modules", 
-    "No access to transcript",
-    "-"
-  ))
-# ============================================================
+# STARS-M
+stars_m_cols <- c(
+  paste0("Q8.1_", 1:20),
+  "Q7.1_9", "Q7.1_12", "Q7.1_17"
+)
 
-# Prints all the ways people have inputed the grade
-unique(smarvus_raw$grade)
+# R-MARS-S
+rmars_s_cols <- c(
+  paste0("Q7.2_", 1:19),
+  "Q8.2_11"
+)
 
-# Prints all the grade conversions
-unique(smarvus_raw$grade_category_notes)
+# Calculate scores
+smarvus_filtered <- smarvus_filtered |>
+  mutate(
+    stars_score = rowSums(pick(all_of(stars_cols))),
+    rmars_score = rowSums(pick(all_of(rmars_cols))),
+    stars_m_score = rowSums(pick(all_of(stars_m_cols))),
+    rmars_s_score = rowSums(pick(all_of(rmars_s_cols)))
+  )
+```
 
+## Easy read table
+
+```{r}
 # Making easy to read reference df
 smarvus_grades_only <- data.frame(
   survey_id = smarvus_raw$survey_id,
@@ -112,25 +115,28 @@ smarvus_grades_only <- data.frame(
 smarvus_grades_only
 ```
 
+# Old
+
 ```{r Defining grade bands}
 # In all cases grade assigned is by taking the mid point of the grade band
 
 # ==================================
 # brawijaya conversion
 # "A > 80, 75 < B+ ≤ 80, 69 < B ≤ 75, 60 < C+ ≤ 69, 55 < C ≤ 60, 50 < D+ ≤ 55, 44 < D ≤ 50, E < 44"     
-brawijaya_conversion <- c(
+brawijaya_conversion_old <- c(
   "A"  = 90,
   "B+" = 77.5, "B"  = 72,
   "C+" = 64.5, "C"  = 57.5,
   "D+" = 52.5,"D"  = 47,
   "E"  = 22     
 )
+
 # ==================================
 # limerik
 # taking the mid point of the grade band
 # ">80 = A1, 75-79 = A2, 70-74 = B1, 65-69 = B2, 60-64 = B3, 55-59 = C1, 50-54 = C2, 45-49 = C3,
 # 40-44 = D1, 35-39 = D2, <35 = F
-limerick_conversion <- c(
+limerick_conversion_old <- c(
   "A1"  = 90, "A2" = 77, 
   "B1"  = 73, "B2" = 67, "B3" = 62,
   "C1" = 57, "C2"  = 52, "C3" = 47,
@@ -143,7 +149,7 @@ limerick_conversion <- c(
 # taking the mid point of the grade band
 # "A = 90-100, A- = 80-89, B+ = 75-79, B = 70-74, B- = 65-69; C+ = 60-64, C = 55-59, C- = 50-54, 
 # D+ = 45-49, D = 35-44, F <35"   
-mef_conversion <- c(
+mef_conversion_old <- c(
   "A"  = 95, "A-" = 84.5, 
   "B+"  = 77, "B" = 72, "B-" = 67,
   "C+" = 62, "C"  = 57, "C-" = 52,
@@ -155,7 +161,7 @@ mef_conversion <- c(
 # york_can
 # conversion not given- https://calendars.students.yorku.ca/2025-2026/grades-and-grading-schemes
 
-york_can_conversion <- c(
+york_can_conversion_old <- c(
   "A+" = 95, "A" = 84.5,
   "B+" = 77.5, "B" = 72.5,
   "C+" = 67.5, "C" = 62.5,
@@ -177,15 +183,10 @@ york_can_conversion <- c(
   "A+, B" = 85,
   "B, B" = 72.5 
 )
+
 # ==================================
 # All remaining universities grades are already numeric
 
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-```{r Making grades numeric in df}
-# Making all grade numeric respective to their individual coversions
 numeric_grade <- function(df) {df %>%
   mutate(
     grade = as.character(grade),
@@ -226,13 +227,106 @@ numeric_grade <- function(df) {df %>%
   )
 }
 
-# Once got saba's final cleaned code run it through the function
-# ================================================================
-final_standardised_grade <- numeric_grade(smarvus_grades_only)
-# ================================================================
+```
+# New
 
-cor(final_standardised_grade$grade_std,)
+```{r Defining grade bands}
+# In all cases grade assigned is by taking the mid point of the grade band
+
+# ==================================
+# brawijaya conversion
+
+brawijaya_conversion <- c("E", "D", "D+", "C", "C+", "B", "B+", "A")
+
+# ==================================
+# limerick
+
+limerick_conversion <- c("F", "D2", "D1", 
+                         "C3", "C2", "C1", 
+                         "B3", "B2", "B1",
+                         "A2", "A1")
+
+# ==================================
+# mef
+
+mef_conversion <- c("F", "D", "D+", 
+                    "C-", "C", "C+", 
+                    "B-", "B", "B+",
+                    "A-", "A")
+
+# ==================================
+# york_can
+
+york_can_conversion <- c("F", "E", "D", "D+", 
+                         "C", "C+", "B", "B+",
+                         "A", "A+")
+# NOTE: need to remove 8 with two grades given
+
+# ==================================
+# hungary
+hungary_conversion <- c("1", "2", "3", "4", "5")
+
+# ==================================
+# All remaining universities grades are already numeric
 
 ```
 
+# Function
 
+```{r Making grades numeric in df}
+# Making all grade numeric respective to their individual coversions
+numeric_to_ordinal_grade <- function(df) {df %>%
+  mutate(
+    grade = as.character(grade),
+    grade_std = case_when(
+      
+      # anglia_ruskin and sussex: Grades with "%" in them
+      survey_id %in% c("anglia_ruskin", "sussex") ~
+        suppressWarnings(as.numeric(sub("%", "", grade))),
+
+      # brawijaya conversion
+      survey_id %in% "brawijaya" ~
+        unname(as.numeric(factor(grade, levels = brawijaya_conversion, ordered = TRUE))),
+
+      # limerick
+      survey_id %in% "limerick" ~
+        unname(as.numeric(factor(grade, levels = limerick_conversion, ordered = TRUE))),
+      
+      # mef
+      survey_id %in% "mef" ~
+        unname(as.numeric(factor(grade, levels = mef_conversion, ordered = TRUE))),  
+      
+      # york_can
+      survey_id %in% "york_can" ~
+        unname(as.numeric(factor(grade, levels = york_can_conversion, ordered = TRUE))),
+    
+      # hungary
+        survey_id %in% "hungary" ~
+          unname(as.numeric(factor(grade, levels = hungary_conversion, ordered = TRUE))),
+
+      # All other universities stay the same
+      survey_id %in% c("bournemouth", "bradford", "hasan_kalyoncu", 
+                       "la_laguna", "lincoln_1", "lincoln_2", 
+                       "macquarie", "queens", "rotterdam", 
+                       "southampton", "teesside", "uc_louvain", 
+                       "vienna", "western_aus_a", "western_aus_b") ~
+        suppressWarnings(as.numeric(grade)),
+
+    )
+  )
+}
+
+# Applying to df
+# ================================================================
+smarvus_filtered <- numeric_to_ordinal_grade(smarvus_filtered)
+# ================================================================
+
+```
+
+# Spearman rank for non numeric grades
+
+```{r}
+
+brawijaya <- smarvus_filtered |>
+  filter(survey_id == "brawijaya")
+```
