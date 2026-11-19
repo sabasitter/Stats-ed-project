@@ -92,7 +92,7 @@ The correlation coefficient was then converted into Cohen's d to obtain a standa
 
 ## Preliminary analysis continued: Brawijaya University
 
-Brawijaya University Indonesia was then selected as a further case study, due to its vastly different grading system than the University of Sussex; using letter grades A - E. The grades were treated as ordered factors. Following data cleaning and filtering, 114 responses were retained. The mean STARS score was 71.2, with a standard deviation of 18.0 and a median of 72. Histograms were produced to further investigate the shape, spread and symmetry of the STARS SCORE and grade.
+Brawijaya University Indonesia was then selected as a further case study, due to its vastly different grading system than the University of Sussex; using letter grades A - E. The grades were treated as ordered factors. Following data cleaning and filtering, 114 responses were retained. The mean STARS score was 71.2, with a standard deviation of 18.0 and a median of 72. Histograms were produced to further investigate the shape, spread and symmetry of the STARS score and grade.
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 7, fig.align="center", fig.cap="Distributions of statistics anxiety and academic attainment at Brawijaya University."}
 brawijaya_histograms()
