@@ -116,7 +116,7 @@ Spearman's rank correlation coefficient was calculated independently for each un
 The correlation coefficients and their corresponding confidence intervals were subsequently converted into Cohen's d to obtain effect size estimates for the meta-analysis.
 
 \begin{table}[H]
-```{r, echo=FALSE, out.width="40%"}
+```{r, echo=FALSE, out.width="40%", fig.align='center'}
 knitr::include_graphics("effect_size_table.png")
 ```
 \caption{Correlation and effect size information by universities.}
@@ -138,7 +138,7 @@ The standard error of each university's effect size was approximated using the w
 
 A forest plot was produced to visualise the individual university effect sizes, their corresponding 95% confidence intervals and the overall pooled effect size.
 
-```{r, echo=FALSE, fig.height = 4, fig.width = 5, fig.cap="Forest plot of effect sizes across universities."}
+```{r, echo=FALSE, fig.height = 6, fig.width = 5, fig.cap="Forest plot of effect sizes across universities."}
 meta_forest()
 ```
 
