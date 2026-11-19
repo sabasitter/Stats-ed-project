@@ -1,0 +1,42 @@
+---
+title: "Emma's Code"
+output: html_document
+date: "2026-11-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r find non numeric unis}
+#make a helper function to identify non-numeric grades for different unis
+
+has_nonnumeric <- function(uni) {
+  grades <- smarvus_grades_only %>%
+    filter(survey_id == uni) %>%
+    pull(grade)
+  
+    any(is.na(suppressWarnings(as.numeric(grades))))       
+}
+
+unis <- unique(smarvus_grades_only$survey_id)
+
+nonnumeric_unis <- unis[sapply(unis, has_nonnumeric)]
+nonnumeric_unis
+```
+
+```{r}
+smarvus_grades_only %>%
+  filter(survey_id == "lincoln_2") %>%
+  distinct(grade)
+```
+```{r}
+
+```
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
