@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #make a helper function to identify non-numeric grades for different unis
 
 has_nonnumeric <- function(uni) {
-  grades <- smarvus_grades_only %>%
+  grades <- smarvus_filtered %>%
     filter(survey_id == uni) %>%
     pull(grade)
   
@@ -28,10 +28,23 @@ nonnumeric_unis
 
 ```{r}
 smarvus_grades_only %>%
-  filter(survey_id == "lincoln_2") %>%
+  filter(survey_id == "york_can") %>%
   distinct(grade)
 ```
 ```{r}
+#remove non-numeric and one 0-5 scale
+#remove grades with %, comma instead of point, covert to numeric
+smarvus_cont <- smarvus_filtered %>%
+  filter(!survey_id %in% c("brawijaya", "limerick" ,"york_can", "vienna", "hungary")) %>%
+  mutate(grade = str_remove_all(grade, "%") %>%
+                   str_replace(",", ".") %>%
+                   as.numeric()) 
+
+
+cor_results_cont <- smarvus_cont %>%
+  group_by(survey_id) %>%
+  summarise(n = n(),
+            r = cor(grade, stars_score, method = "spearman"))
 
 ```
 
