@@ -31,7 +31,7 @@ source("code.R") # Runs all models and creates tables/plots in the background
 
 # Effect size summary
 
-d = A, 95% confidence interval[B,C] based on N = D
+d = -0.073, 95% confidence interval[-0.256,0.111] based on N = 1,380
 
 # Summary of the analysis approach 
 
@@ -39,9 +39,9 @@ The SMARVUS dataset$^{1}$ was initially cleaned by removing columns that were no
 
 The respondents were then filtered. Only students whose grades were provided directly by their universities were included to ensure consistency in comparisons, as self-reported grades could describe modules sat years before the questionnaire. Observations where grades were recorded as zero were also  excluded, as these could be null submissions. 
 
-The 70 respondents who did not fully complete all four anxiety questionnaires (STARS, R-MARS-S, STARS-M and R-MARS) were also excluded to ensure consistency when calculating and comparing anxiety scores. England and Northern Ireland were grouped together to simplify geographical comparison. Furthermore, respondents who failed any of the attention checks, or who did not confirm that they had answered the survey truthfully, were excluded. This resulted in the exclusion of another 342 respondents. 
+The 70 respondents who did not fully complete all four anxiety questionnaires (STARS, R-MARS-S, STARS-M and R-MARS) were also excluded to ensure consistency when calculating and comparing anxiety scores. England and Northern Ireland were grouped together to simplify geographical comparison. Furthermore, respondents who failed any of the attention checks, or who did not confirm that they had answered the survey truthfully, were excluded. This resulted in the exclusion of another 342 respondents. 8 further respondents from York University were removed due to two grades being reported by the university. 
 
-This left a final sample of 1,385 respondents across 18 universities in 10 countries, with questionnaires completed in seven languages. The geographical distribution of the final sample is presented in Table 1.
+This left a final sample of 1,380 respondents across 18 universities in 10 countries, with questionnaires completed in seven languages. Two universities had a second course reported, which were treated as additional universities in the meta analysis. The geographical distribution of the final sample is presented in Table 1.
 
 \begin{table}[H]
 \centering
@@ -61,7 +61,7 @@ A key challenge when comparing attainment in statistics modules across universit
 
 By treating each university as a separate study, the original numerical grading scales can be retained, avoiding the potential loss of information associated with converting all grades to a common scale.
 
-The letter-based grading systems were treated as ordered factors, as were the grades on scales of 1-5. The percentage-based grades and grades on scales of 1-20 were treated as numerical variables. Due to Pearson's correlation assuming a linear relationship$^2$, this was only used for the numerical grades, and Spearman's correlation was used for the factors. 
+The letter-based grading systems were treated as ordered factors, as were the grades on scales of 1-5. The percentage-based grades and grades on scales of 1-20 were treated as numerical variables. Due to Spearman's correlation measuring monotonic relationships rather than purely linear and using ranked values, it was deemed as preferable to using Pearson's correlation$^2$.
 
 ## Calculating anxiety scores
 
@@ -76,21 +76,7 @@ Descriptive statistics were calculated for both STARS scores and academic attain
 
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 7, fig.align="center", fig.cap="Distributions of statistics anxiety and academic attainment at the University of Sussex."}
-par(mfrow = c(1, 2))
-
-hist(smarvus_sussex$stars_score,
-     col = "steelblue",
-     main = "Statistics Anxiety",
-     xlab = "STARS Score",
-     ylab = "Frequency")
-
-hist(smarvus_sussex$grade,
-     col = "indianred1",
-     main = "Academic Attainment",
-     xlab = "Grade (%)",
-     ylab = "Frequency")
-
-par(mfrow = c(1, 1))
+sussex_histograms()
 ```
 
 Figure 1 shows the distributions of statistics anxiety and academic attainment at the University of Sussex. The distribution of STARS scores is approximately symmetrical and bell-shaped, centred around a mean of 70.09. In contrast, the distribution of academic attainment is negatively skewed, with most respondents achieving grades between 60% and 80%. A small number of considerably lower grades contribute to the longer left tail. These observations are worth considering when investigating the correlation between statistics anxiety and academic attainment, as extreme values may influence Pearson's correlation coefficient.
@@ -98,82 +84,45 @@ Figure 1 shows the distributions of statistics anxiety and academic attainment a
 Having explored the distributions of statistics anxiety and academic attainment individually, a scatterplot was produced to investigate the relationship between the two variables. It was hypothesised that higher levels of statistics anxiety would be associated with lower academic attainment.
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 6, fig.cap="Scatterplot of attainment vs statistical anxiety at the University of Sussex."}
-# Seeing relationship between anxiety and attainment
-ggplot(smarvus_sussex,
-       aes(x = stars_score, y = grade)) +
-  geom_point(alpha = 0.5, col = 'steelblue') +
-  geom_smooth(method = "lm", col = 'indianred1') +
-  labs(
-    x = "STARS Score",
-    y = "Grade (%)",
-    title = "Statistics Anxiety and Attainment at Sussex"
-  ) +
-  theme_minimal()
-
+sussex_scatterplot
 ```
 
-Figure 2 shows a slight negative correlation between STARS Score and attainment, suggesting that respondents with higher levels of statistical anxiety tend to perform worse. Pearson's correlation coefficient, a measure of the strength and direction of the linear relationship, was calculated to be -0.20, with a 95% confidence interval of [-0.30, -0.09]. This suggests a statistical significance. 
-
-The correlation coefficient was then converted into Cohen's d to obtain a standardised effect size to allow for comparison of effect sizes across universities and their subsequent pooling through a meta-analysis. The Cohen's d measure calculated to be -0.41, indicates a small to moderate effect size$^{3}$, suggesting that higher levels of statistics anxiety are associated with lower academic attainment at the University of Sussex. 
+Figure 2 shows a slight negative correlation between STARS Score and attainment, suggesting that respondents with higher levels of statistical anxiety tend to perform worse. Spearman's correlation coefficient, a measure of the strength and direction of the relationship, was calculated to be -0.17, with a 95% confidence interval of [-0.27, -0.06]. This suggests a statistical significance. 
+The correlation coefficient was then converted into Cohen's d to obtain a standardised effect size to allow for comparison of effect sizes across universities and their subsequent pooling through a meta-analysis. The Cohen's d measure calculated to be -0.35, indicates a small to moderate effect size$^{3}$, suggesting that higher levels of statistics anxiety are associated with lower academic attainment at the University of Sussex. 
 
 ## Preliminary analysis continued: Brawijaya University
 
-Brawijaya University Indonesia was then selected as a further case study, due to its vastly different grading system than the University of Sussex; using letter grades A - E. The grades were treated as ordered factors. Following data cleaning and filtering, 114 responses were retained. The mean STARS score was 71.2, with a standard deviation of 18.0 and a median of 72 Histograms were produced to further investigate the shape, spread and symmetry of the STARS SCORE and grade.
+Brawijaya University Indonesia was then selected as a further case study, due to its vastly different grading system than the University of Sussex; using letter grades A - E. The grades were treated as ordered factors. Following data cleaning and filtering, 114 responses were retained. The mean STARS score was 71.2, with a standard deviation of 18.0 and a median of 72. Histograms were produced to further investigate the shape, spread and symmetry of the STARS SCORE and grade.
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 7, fig.align="center", fig.cap="Distributions of statistics anxiety and academic attainment at Brawijaya University."}
-par(mfrow = c(1, 2))
-
-hist(smarvus_brawijaya$stars_score,
-     col = "steelblue",
-     main = 'Statistics Anxiety',
-     xlab = "STARS Score",
-     ylab = "Frequency")
-
-
-grade_factor <- factor(
-  smarvus_brawijaya$grade,
-  levels = c("E", "D", "D+", "C", "C+", "B", "B+", "A")
-)
-
-counts <- table(grade_factor)
-
-barplot(
-  counts,
-  main = "Academic Attainment",
-  xlab = "Grade",
-  ylab = "Frequency",
-  col = "indianred1", 
-  cex.names = 0.8
-)
-
-par(mfrow = c(1, 1))
+brawijaya_histograms()
 
 ```
 Figure 3 shows the distribution of STARS Score is again approximately bell shaped and centered around a mean of 71.2. Most respondents achieved higher grades. The relationship between STARS score and academic attainment was then plotted.
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 6, fig.cap="Boxplot of attainment vs statistical anxiety at Brawijaya University."}
-ggplot(smarvus_brawijaya,
-       aes(x = stars_score, y = grade)) +
-  geom_boxplot( col = 'steelblue') +
-  labs(
-    x = "STARS Score",
-    y = "Grade (%)",
-    title = "Statistics Anxiety and Attainment at Brawijaya"
-  ) +
-  theme_minimal()
+brawijaya_relationship
 
 ```
 
-It is not clear to tell if there is a correlation between STARS score and attainment. Spearman's correlation coefficient, a measure of the strength and direction of the linear relationship, was calculated to be -0.07, with a 95% confidence interval of [-0.25, 0.12]. This suggests a slight negative correlation, as in Sussex University, but the statistical significance can't be established yet. The Cohen's d was calculated to be -0.13, indicating a very weak negative correlation
+It is not clear to tell if there is a correlation between STARS score and attainment. Spearman's correlation coefficient was calculated to be -0.07, with a 95% confidence interval of [-0.25, 0.12]. This suggests a slight negative correlation, as in Sussex University, but the statistical significance can't be established yet. The Cohen's d was calculated to be -0.14, indicating a very weak negative correlation
 
 ## Extending analysis across universities
 
-Having demonstrated the analytical approach using the University of Sussex, the same methodology was applied to the remaining universities to investigate whether the observed relationship between statistics anxiety and academic attainment was consistent across different universities and countries. 
+Having demonstrated the analytical approach using the University of Sussex and Brawijaya University, the same methodology was applied to the remaining universities to investigate whether the observed relationship between statistics anxiety and academic attainment was consistent across different universities and countries. 
 
-Pearson's correlation coefficient was calculated independently for each university and subsequently converted into Cohen's d to obtain comparable effect sizes.
+Spearman's rank correlation coefficient was calculated independently for each university, alongside its corresponding 95% confidence interval. This method was used consistently across universities to accommodate differences in grading systems, particularly those with letter grades.
 
-[insert the r code to calculate effect sizes, table with university, sample size, correlation coefficient, cohens d and 95% confidence interval, discuss variation in effect size across unis]
+The correlation coefficients and their corresponding confidence intervals were subsequently converted into Cohen's d to obtain effect size estimates for the meta-analysis.
 
+\begin{table}[H]
+```{r, echo=FALSE, out.width="40%"}
+knitr::include_graphics("effect_size_table.png")
+```
+\caption{Correlation and effect size information by universities.}
+\end{table}
+
+Table 2 shows that the effect size is only significant in 4 out of 20 university courses, indicating that the results seen in Sussex do not necessarily hold across different universities.
 
 ## Meta-analysis
 
@@ -185,9 +134,23 @@ There are two main approaches to pooling effect sizes: fixed effect (assumes  th
 
 ### Pooling effect sizes
 
-[explain how effect sizes were weighted, r code for the meta stuff]. 
+The standard error of each university's effect size was approximated using the width of its 95% confidence interval. The effect sizes were then pooled using a random-effects model implemented through the metafor package in R.
 
-The pooled effect size was found to be [n], with a 95% confidence interval of [n], based on a total sample of [n] respondents.
+A forest plot was produced to visualise the individual university effect sizes, their corresponding 95% confidence intervals and the overall pooled effect size.
+
+```{r, echo=FALSE, fig.height = 4, fig.width = 5, fig.cap="Forest plot of effect sizes across universities."}
+meta_forest()
+```
+
+The pooled effect size was found to be -0.07, with a 95% confidence interval of [-0.26,0.11], based on a total sample of 1,380 respondents across 18 universities. 
+
+This does not correspond to a significant association between statistics anxiety and academic attainment across the universities. There is therefore insufficient evidence of an overall association for all universities, despite the relationship being significant at the University of Sussex.
+
+### Heterogenity between universities
+
+An $I^2$ value of 47.86% was obtained, indicating moderate heterogeneity between the individual effect size estimates$^4$. The estimated between-study variance was 0.0665. Furthermore, the test for heterogeneity in the random-effects model indicated statistically significant heterogeneity (Q(19) = 34.91, p = 0.01), suggesting that the variation in effect sizes cannot be because of sampling error alone. 
+
+This supports the decision to use a random-effects model and suggests that the relationship between statistics anxiety and academic attainment may vary across universities.
 
 # Discussion and limitations
 
@@ -203,16 +166,7 @@ $^{1}$ Data from an International MultiCentre Study of Statistics and Mathematic
 
 $^2$ https://www.datanovia.com/learn/biostatistics/correlation/correlation-test-in-r
 
-$^3$https://www.vanderbilt.edu/data/2026/02/23/the-value-of-effect-sizes/
+$^3$ https://www.vanderbilt.edu/data/2026/02/23/the-value-of-effect-sizes/
 
-$^3$ https://cjvanlissa.github.io/Doing-Meta-Analysis-in-R/pool.html
-
-
-# Appendix - Code
-
-
-All analysis code is in `code.R` and is reproduced below.
-
-```{r print-code, echo=TRUE, eval=FALSE, code=readLines("code.R")}
-```
+$^4$ https://analisisdedatospsicologia.com/en/blog/heterogeneidad-metaanalisis-i2
 
