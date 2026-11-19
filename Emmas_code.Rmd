@@ -32,22 +32,48 @@ smarvus_grades_only %>%
   distinct(grade)
 ```
 ```{r}
-#remove non-numeric and one 0-5 scale
-#remove grades with %, comma instead of point, covert to numeric
+
+#Making sure everything is numeric 
+
 smarvus_cont <- smarvus_filtered %>%
-  filter(!survey_id %in% c("brawijaya", "limerick" ,"york_can", "vienna", "hungary")) %>%
-  mutate(grade = str_remove_all(grade, "%") %>%
+  #filter(!survey_id %in% c("brawijaya", "limerick" ,"york_can", "vienna", "hungary")) %>%
+  mutate(grade_std = str_remove_all(grade_std, "%") %>%
                    str_replace(",", ".") %>%
                    as.numeric()) 
 
 
+#correlation results, just to see bare r's, not used below
 cor_results_cont <- smarvus_cont %>%
   group_by(survey_id) %>%
   summarise(n = n(),
-            r = cor(grade, stars_score, method = "spearman"))
+            r = cor(grade_std, stars_score, method = "spearman"))
 
 ```
 
+```{r metadata}
+#using stuff from notes with all unis using spearman correlation
+#don't really know where some things come from so investigate tomorrow, just following code in notes
+library(correlation)
+library(effectsize)
+library(metafor)
+
+cor_func <- function(uni) {
+  d <- smarvus_cont %>% filter(survey_id == uni)
+  test <- correlation::cor_test(d, "grade", "stars_score", method = "spearman") #get spearman CIs
+  tibble(survey_id = uni,
+         n    = test$n_Obs,
+         d    = r_to_d(test$rho),
+         low  = r_to_d(test$CI_low),
+         high = r_to_d(test$CI_high))
+}
+
+meta_data <- map_dfr(unique(smarvus_cont$survey_id), cor_func) %>%
+  mutate(se = (high - low) / 3.92)
+
+meta_result <- metafor::rma(d, sei = se, slab = survey_id, data = meta_data)
+meta_result
+forest(meta_result)
+```
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
