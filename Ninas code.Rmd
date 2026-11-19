@@ -12,6 +12,67 @@ library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; librar
 theme_set(theme_minimal())
 ```
 
+# Saba's Cleaned data
+```{r Cleaning data}
+#Downloading dataset with relevant columns only
+smarvus_raw <- read.csv("smarvus_correct_cols.csv")
+
+# Remove participants with no reported grade data or where grade has been reported as 0
+smarvus_raw <- smarvus_raw |>
+  filter(!grade %in% c(
+    "Not Available", 
+    NA, 
+    "Non complete - LoA", 
+    "No stats module on record", 
+    "No stats modules", 
+    "No access to transcript",
+    "-",
+    "0",
+    "0.00",
+    "0%",
+    "0.00%"
+  ))
+
+# Remove participants who did not answer the anxiety questions 
+anxiety_cols <- c(
+  paste0("Q7.1_", 1:23),
+  paste0("Q7.2_", 1:19),
+  paste0("Q8.1_", 1:20),
+  paste0("Q8.2_", 1:20)
+)
+
+smarvus_filtered <- smarvus_raw |>
+  filter(if_all(all_of(anxiety_cols), ~ !is.na(.)))
+
+# Grouping England and Northern Ireland into one country
+smarvus_filtered <- smarvus_filtered |>
+  mutate(country = if_else(
+    country %in% c("England", "Northern Ireland"),
+    "United Kingdom",
+    country
+  ))
+
+before <- nrow(smarvus_filtered)
+
+smarvus_filtered <- smarvus_filtered |>
+  filter(
+    attention_amnesty == "Yes",
+    Q7.1_24 == "1",
+    Q8.1_21 == "5",
+    Q9.1_22 == "1",
+    Q11.1_9 == "3",
+    Q13.1_17 == "2",
+    Q15.1_9 == "4"
+  )
+
+# Number of respondents removed
+before - nrow(smarvus_filtered)
+
+# Number of respondents remaining
+nrow(smarvus_filtered)
+
+
+```
 ## Removing entries without official grade reported
 
 ```{r Cleaning data}
@@ -65,22 +126,6 @@ brawijaya_conversion <- c(
   "E"  = 22     
 )
 # ==================================
-# hungary conversion
-# **No info given**
-# found from University of Debrecen, https://eng.unideb.hu/en/grading-system-hungary-university-debrecen 
-hungary_conversion <- c(
-  "5" = 95,
-  "4" = 84.5,
-  "3" = 74.5,
-  "2" = 64.5,
-  "1" = 29.5
-)
-
-# ==================================
-# la_laguna
-# **No info given**
-
-# ==================================
 # limerik
 # taking the mid point of the grade band
 # ">80 = A1, 75-79 = A2, 70-74 = B1, 65-69 = B2, 60-64 = B3, 55-59 = C1, 50-54 = C2, 45-49 = C3,
@@ -107,31 +152,45 @@ mef_conversion <- c(
 )
 
 # ==================================
-# rotterdam 
-# **No info given**
-
-# ==================================
-# uc_louvain
-# **No info given**
-
-# ==================================
-# vienna
-# **No info given**
-
-# ==================================
 # york_can
-# **No info given**
+# conversion not given- https://calendars.students.yorku.ca/2025-2026/grades-and-grading-schemes
+
+york_can_conversion <- c(
+  "A+" = 95, "A" = 84.5,
+  "B+" = 77.5, "B" = 72.5,
+  "C+" = 67.5, "C" = 62.5,
+  "D+" = 57.5, "D" = 42.5,
+  "E" = 44.5, "F" = 17.5,
+  
+  # For the following grades, couldn't find on the internet what they meant 
+  # so computed them by generating the boundary they are in and found the midpt
+  
+  # EG: for this one B+ in (75,79) and D+ in (55,59), 
+  # so treaded B+, D+ as being in (55,79) so midpt of 67
+  
+  "B+, D+" = 67, 
+  "A, A+" = 94.5,
+  "A+, A+" = 95,
+  "A, C+" = 77,
+  "C+, C" = 64.5,
+  "C+, A" = 77,
+  "A+, B" = 85,
+  "B, B" = 72.5 
+)
+# ==================================
+# All remaining universities grades are already numeric
 
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-```{r Standardising grades in df}
-# Standardizing grades to be out of 100 (eg 98.10 or 36.75)
-standardise_grade <- function(df) {df %>%
+```{r Making grades numeric in df}
+# Making all grade numeric respective to their individual coversions
+numeric_grade <- function(df) {df %>%
   mutate(
     grade = as.character(grade),
     grade_std = case_when(
+      
       # anglia_ruskin and sussex: Grades with "%" in them
       survey_id %in% c("anglia_ruskin", "sussex") ~
         suppressWarnings(as.numeric(sub("%", "", grade))),
@@ -139,14 +198,7 @@ standardise_grade <- function(df) {df %>%
       # brawijaya conversion
       survey_id %in% "brawijaya" ~
         unname(brawijaya_conversion[grade]),
-      
-      # hungary conversion
-      survey_id %in% "hungary" ~
-        unname(hungary_conversion[grade]),
-      
-      # la_laguna
-      # update once found reputable conversion
-      
+
       # limerick
       survey_id %in% "limerick" ~
         unname(limerick_conversion[grade]),
@@ -155,17 +207,20 @@ standardise_grade <- function(df) {df %>%
       survey_id %in% "mef" ~
         unname(mef_conversion[grade]),  
       
-      # rotterdam 
-      # update once found reputable conversion
-
-      # uc_louvain
-      # update once found reputable conversion
-      
-      # vienna
-      # update once found reputable conversion
-      
       # york_can
-      # update once found reputable conversion
+      survey_id %in% "york_can" ~
+        unname(york_can_conversion[grade]),
+
+      # All other universities stay the same
+      survey_id %in% c("bournemouth", "bradford", 
+                       "hasan_kalyoncu", "hungary",
+                        "la_laguna", "lincoln_1", 
+                        "lincoln_2", "macquarie",
+                        "queens", "rotterdam", 
+                        "southampton", "teesside",
+                        "uc_louvain", "vienna", 
+                        "western_aus_a", "western_aus_b") ~
+        suppressWarnings(as.numeric(grade)),
 
     )
   )
@@ -173,8 +228,10 @@ standardise_grade <- function(df) {df %>%
 
 # Once got saba's final cleaned code run it through the function
 # ================================================================
-final_standardised_grade <- standardise_grade(smarvus_grades_only)
+final_standardised_grade <- numeric_grade(smarvus_grades_only)
 # ================================================================
+
+cor(final_standardised_grade$grade_std,)
 
 ```
 
