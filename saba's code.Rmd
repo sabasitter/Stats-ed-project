@@ -236,3 +236,88 @@ cor_result
 
 effectsize::r_to_d(r = cor_result$estimate)
 ```
+
+```{r Analysis on Brawijaya }
+# Extract Brawijaya responses
+smarvus_brawijaya <- smarvus_filtered |>
+  filter(university == "Brawijaya University")
+
+# Finding number of responses
+nrow(smarvus_brawijaya)
+
+#Changing grades to numbers 
+# Define the order from lowest to highest
+grade_levels <- c("E", "D", "D+", "C", "C+", "B", "B+", "A")
+
+smarvus_brawijaya <- smarvus_brawijaya |>
+  mutate(grade_rank = as.numeric(factor(grade, levels = grade_levels, ordered = TRUE)))
+
+#Calculating summary statistics
+brawijaya_summary <- smarvus_brawijaya |>
+  summarise(
+    across(
+      c(stars_score, grade),
+      list(
+        mean = mean,
+        sd = sd,
+        median = median,
+        min = min,
+        max = max
+      )
+    ))
+# Visualising distributions
+par(mfrow = c(1, 2))
+
+hist(smarvus_brawijaya$stars_score,
+     col = "steelblue",
+     main = "Statistics Anxiety",
+     xlab = "STARS Score",
+     ylab = "Frequency")
+
+
+counts <- table(smarvus_brawijaya$grade)
+barplot(counts,
+        main = "Distribution of Cylinders",
+        xlab = "Number of Cylinders",
+        ylab = "Frequency",
+        col = "indianred1")
+
+# Viewing the descriptive variables
+smarvus_brawijaya |> count(gender)
+
+smarvus_brawijaya |> count(degree_year)
+
+smarvus_brawijaya |> count(degree_level_maths)
+
+summary(smarvus_brawijaya$age)
+
+# Seeing relationship between anxiety and attainment
+ggplot(smarvus_brawijaya,
+       aes(x = stars_score, y = grade)) +
+  geom_point(alpha = 0.8, col = 'lightblue2') +
+  geom_smooth(method = "lm", col = 'indianred1') +
+  labs(
+    x = "STARS Score",
+    y = "Grade (%)",
+    title = "Statistics Anxiety and Attainment at Brawijaya"
+  ) +
+  theme_minimal()
+
+boxplot(grade ~ stars_score, data = smarvus_brawijaya,
+        xlab = "Grade",
+        ylab = "STARS SCORE",
+        col = "lightblue")
+
+# Correlation and effect size
+
+
+
+cor_result <- cor.test(
+  smarvus_brawijaya$stars_score,
+  smarvus_brawijaya$grade, method = 'spearman'
+)
+
+cor_result
+
+effectsize::r_to_d(r = cor_result$estimate)
+```

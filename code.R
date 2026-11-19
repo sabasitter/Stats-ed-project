@@ -4,7 +4,7 @@
 
 knitr::opts_chunk$set(echo = TRUE)
 
-library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; library(easystats); library(gt)
+library(arrow); library(tidyverse); library(lubridate) ; library(dplyr) ; library(easystats); library(gt); library(DescTools)
 # set the default plot style
 theme_set(theme_minimal())
 
@@ -165,7 +165,7 @@ smarvus_filtered <- smarvus_filtered |>
   )
 
 
-## 8. Preliminary analysis: University of Sussex ------------------------
+## 8.1 Preliminary analysis: University of Sussex ------------------------
 
 # Extract Sussex responses
 smarvus_sussex <- smarvus_filtered |>
@@ -178,8 +178,6 @@ nrow(smarvus_sussex)
 smarvus_sussex <- smarvus_sussex |>
   mutate(grade = as.numeric(sub("%", "", grade)))
 
-
-## 8.1 Exploratory data analysis -----------------------------------------
 
 #Calculating summary statistics
 sussex_summary <- smarvus_sussex |>
@@ -195,6 +193,7 @@ sussex_summary <- smarvus_sussex |>
       )
     )
   )
+
 # Visualising distributions
 par(mfrow = c(1, 2))
 
@@ -221,9 +220,6 @@ smarvus_sussex |> count(degree_level_maths)
 
 summary(smarvus_sussex$age)
 
-
-## 8.2 Relationship between anxiety and attainment ----------------------
-
 # Seeing relationship between anxiety and attainment
 ggplot(smarvus_sussex,
        aes(x = stars_score, y = grade)) +
@@ -236,9 +232,6 @@ ggplot(smarvus_sussex,
   ) +
   theme_minimal()
 
-
-## 8.3 Correlation and effect size ---------------------------------------
-
 # Correlation and effect size
 cor_result <- cor.test(
   smarvus_sussex$stars_score,
@@ -249,6 +242,104 @@ cor_result
 
 effectsize::r_to_d(r = cor_result$estimate)
 
+## 8.2 Brawijaya University --------------------------------------------
+
+# Extract Brawijaya responses
+smarvus_brawijaya <- smarvus_filtered |>
+  filter(university == "Brawijaya University")
+
+# Finding number of responses
+nrow(smarvus_brawijaya)
+
+#Changing grades to numbers 
+# Define the order from lowest to highest
+grade_levels <- c("E", "D", "D+", "C", "C+", "B", "B+", "A")
+
+smarvus_brawijaya <- smarvus_brawijaya |>
+  mutate(grade_numeric = as.numeric(
+    factor(grade, levels = grade_levels, ordered = TRUE)
+  ))
+
+#Calculating summary statistics
+brawijaya_summary <- smarvus_brawijaya |>
+  summarise(
+    across(
+      c(stars_score, grade),
+      list(
+        mean = mean,
+        sd = sd,
+        median = median,
+        min = min,
+        max = max
+      )
+    ))
+
+# Visualising distributions
+par(mfrow = c(1, 2))
+
+hist(smarvus_brawijaya$stars_score,
+     col = "steelblue",
+     main = 'Statistics Anxiety',
+     xlab = "STARS Score",
+     ylab = "Frequency")
+
+
+grade_factor <- factor(
+  smarvus_brawijaya$grade,
+  levels = c("E", "D", "D+", "C", "C+", "B", "B+", "A")
+)
+
+counts <- table(grade_factor)
+
+barplot(
+  counts,
+  main = "Academic Attainment",
+  xlab = "Grade",
+  ylab = "Frequency",
+  col = "indianred1", 
+  cex.names = 0.8
+)
+
+par(mfrow = c(1, 1))
+
+# Seeing relationship between anxiety and attainment
+ggplot(smarvus_brawijaya,
+       aes(x = stars_score, y = grade)) +
+  geom_boxplot( col = 'steelblue') +
+  labs(
+    x = "STARS Score",
+    y = "Grade (%)",
+    title = "Statistics Anxiety and Attainment at Brawijaya"
+  ) +
+  theme_minimal()
+# Viewing the descriptive variables
+smarvus_brawijaya |> count(gender)
+
+smarvus_brawijaya |> count(degree_year)
+
+smarvus_brawijaya |> count(degree_level_maths)
+
+summary(smarvus_brawijaya$age)
+
+#correlation spearmans coefficient
+
+cor_result <- SpearmanRho(
+  smarvus_brawijaya$stars_score,
+  smarvus_brawijaya$grade,
+  conf.level = 0.95
+)
+
+cor_result
+
+#turning into cohens d
+cor_result <- cor.test(
+  smarvus_brawijaya$stars_score,
+  smarvus_brawijaya$grade, method = 'spearman'
+)
+
+cor_result
+
+effectsize::r_to_d(r = cor_result$estimate)
 
 ## 9. Extending the analysis across universities -------------------------
 
