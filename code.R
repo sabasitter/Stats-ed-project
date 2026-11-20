@@ -53,7 +53,7 @@ smarvus_filtered <- smarvus_filtered |>
 # Grouping western aus a and western aus b
 smarvus_filtered <- smarvus_filtered |>
   mutate(survey_id = if_else(
-    country %in% c("western_aus_a", "western_aus_b"),
+    survey_id %in% c("western_aus_a", "western_aus_b"),
     "western_aus",
     survey_id
   ))
@@ -157,6 +157,7 @@ limerick_conversion <- c("F", "D2", "D1", "C3", "C2", "C1", "B3", "B2", "B1","A2
 mef_conversion <- c("F", "D", "D+", "C-", "C", "C+",  "B-", "B", "B+","A-", "A")
 york_can_conversion <- c("F", "E", "D", "D+", "C", "C+", "B", "B+","A", "A+")
 hungary_conversion <- c("1", "2", "3", "4", "5")
+vienna_conversion <- c("5", "4", "3", "2", "1")
 
 numeric_grade <- function(df) {df %>%
     mutate(
@@ -165,31 +166,37 @@ numeric_grade <- function(df) {df %>%
         # anglia_ruskin and sussex
         survey_id %in% c("anglia_ruskin", "sussex") ~suppressWarnings(as.numeric(sub("%", "", grade))),
         
-        # brawijaya
-        tolower(survey_id) == "brawijaya" ~
-          match(trimws(grade), brawijaya_conversion),
+        # brawijaya conversion
+        survey_id %in% "brawijaya" ~
+          unname(as.numeric(factor(grade, levels = brawijaya_conversion, ordered = TRUE))),
         
         # limerick
-        tolower(survey_id) == "limerick" ~
-          match(trimws(grade), limerick_conversion),
+        survey_id %in% "limerick" ~
+          unname(as.numeric(factor(grade, levels = limerick_conversion, ordered = TRUE))),
         
         # mef
         survey_id %in% "mef" ~
-          match(grade, brawijaya_conversion),
+          unname(as.numeric(factor(grade, levels = mef_conversion, ordered = TRUE))),  
         
         # york_can
         survey_id %in% "york_can" ~
-          match(grade, brawijaya_conversion),
+          unname(as.numeric(factor(grade, levels = york_can_conversion, ordered = TRUE))),
+        
+        # hungary
+        survey_id %in% "hungary" ~
+          unname(as.numeric(factor(grade, levels = hungary_conversion, ordered = TRUE))),
+        
+        # vienna
+        survey_id %in% "vienna" ~
+          unname(as.numeric(factor(grade, levels = vienna_conversion, ordered = TRUE))),
         
         # All other universities stay the same
         survey_id %in% c("bournemouth", "bradford", 
-                         "hasan_kalyoncu", "hungary",
-                         "la_laguna", "lincoln_1", 
-                         "lincoln_2", "macquarie",
+                         "hasan_kalyoncu", "la_laguna", 
+                         "lincoln", "macquarie", 
                          "queens", "rotterdam", 
-                         "southampton", "teesside",
-                         "uc_louvain", "vienna", 
-                         "western_aus_a", "western_aus_b") ~
+                         "southampton", "teesside", 
+                         "uc_louvain", "western_aus") ~
           suppressWarnings(as.numeric(grade)),
         
       )
@@ -484,3 +491,4 @@ effect_size_table <- meta_data |>
 effect_size_table
 
 gtsave(effect_size_table, "effect_size_table.png")
+
