@@ -41,7 +41,7 @@ The respondents were then filtered. Only students whose grades were provided dir
 
 The 70 respondents who did not fully complete all four anxiety questionnaires (STARS, R-MARS-S, STARS-M and R-MARS) were also excluded to ensure consistency when calculating and comparing anxiety scores. England and Northern Ireland were grouped together to simplify geographical comparison. Furthermore, respondents who failed any of the attention checks, or who did not confirm that they had answered the survey truthfully, were excluded. This resulted in the exclusion of another 342 respondents. 8 further respondents from York University were removed due to two grades being reported by the university. 
 
-This left a final sample of 1,380 respondents across 18 universities in 10 countries, with questionnaires completed in seven languages. Two universities had a second course reported, which were treated as additional universities in the meta analysis. The geographical distribution of the final sample is presented in Table 1.
+This left a final sample of 1,380 respondents across 18 universities in 10 countries, with questionnaires completed in seven languages. Two universities had two seperate courses listed, which were combined into one. The geographical distribution of the final sample is presented in Table 1.
 
 \begin{table}[H]
 \centering

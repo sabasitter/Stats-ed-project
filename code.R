@@ -50,6 +50,21 @@ smarvus_filtered <- smarvus_filtered |>
     country
   ))
 
+# Grouping western aus a and western aus b
+smarvus_filtered <- smarvus_filtered |>
+  mutate(survey_id = if_else(
+    country %in% c("western_aus_a", "western_aus_b"),
+    "western_aus",
+    survey_id
+  ))
+
+# Grouping lincoln 1 and lincoln 2
+smarvus_filtered <- smarvus_filtered |>
+  mutate(survey_id = if_else(
+    survey_id %in% c("lincoln_1", "lincoln_2"),
+    "lincoln",
+    survey_id
+  ))
 
 # Remove respondents with 2 grades listed
 smarvus_filtered <- smarvus_filtered |>
