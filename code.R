@@ -432,7 +432,7 @@ smarvus_cont |>
   distinct(survey_id, grade, grade_std)
 cor_func <- function(uni) {
   d <- smarvus_cont %>% filter(survey_id == uni)
-  test <- correlation::cor_test(d, "grade", "stars_score", method = "spearman") #get spearman CIs
+  test <- correlation::cor_test(d, "grade_std", "stars_score", method = "spearman") #get spearman CIs
   tibble(survey_id = uni,
          n    = test$n_Obs,
          d    = r_to_d(test$rho),
