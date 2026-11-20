@@ -2,7 +2,7 @@
 title: 'What effect does statistics anxiety have on attainment?'
 
 author: 'Group members: Emma Deyell, Nina Beadnell, Rebecca Ramsay, & Saba Sitter'
-date: 'Date 2026'
+date: 'Winter 2026'
 output:
   pdf_document:
     number_sections: true
@@ -31,17 +31,17 @@ source("code.R") # Runs all models and creates tables/plots in the background
 
 # Effect size summary
 
-d = -0.073, 95% confidence interval[-0.256,0.111] based on N = 1,380
+d = -0.29, 95% confidence interval[-0.40,-0.18] based on N = 1,380
 
 # Summary of the analysis approach 
 
-The SMARVUS dataset$^{1}$ was initially cleaned by removing columns that were not relevant to the research question. Demographic and educational information, such as gender, language and previous level of mathematics study, was retained alongside questionnaire responses for further exploration.
+The SMARVUS dataset$^1$ was initially cleaned by removing columns that were not relevant to the research question. Demographic and educational information, such as gender, language and previous level of mathematics study, was retained alongside questionnaire responses for further exploration.
 
-The respondents were then filtered. Only students whose grades were provided directly by their universities were included to ensure consistency in comparisons, as self-reported grades could describe modules sat years before the questionnaire. Observations where grades were recorded as zero were also  excluded, as these could be null submissions. 
+The respondents were then filtered. Only students whose grades were provided directly by their universities were included to ensure consistency in comparisons, as self-reported grades could describe modules sat years before the questionnaire. Observations where grades were recorded as zero were also  excluded, as these could be null submissions.
 
-The 70 respondents who did not fully complete all four anxiety questionnaires (STARS, R-MARS-S, STARS-M and R-MARS) were also excluded to ensure consistency when calculating and comparing anxiety scores. England and Northern Ireland were grouped together to simplify geographical comparison. Furthermore, respondents who failed any of the attention checks, or who did not confirm that they had answered the survey truthfully, were excluded. This resulted in the exclusion of another 342 respondents. 8 further respondents from York University were removed due to two grades being reported by the university. 
+The 70 respondents who did not fully complete all four mathematics and statistics anxiety questionnaires were also excluded to ensure consistency when calculating and comparing anxiety scores. England and Northern Ireland were grouped together to simplify geographical comparison. Furthermore, respondents who failed any of the attention checks, or who did not confirm that they had answered the survey truthfully, were excluded. This resulted in the exclusion of another 342 respondents. 8 further respondents from York University were removed due to two grades being reported by the university. 
 
-This left a final sample of 1,380 respondents across 18 universities in 10 countries, with questionnaires completed in seven languages. Two universities had two seperate courses listed, which were combined into one. The geographical distribution of the final sample is presented in Table 1.
+This left a final sample of 1,380 respondents across 18 universities in 10 countries, with questionnaires completed in seven languages. Two universities had two separate IDs, which were combined into one. The geographical distribution of the final sample is presented in Table 1.
 
 \begin{table}[H]
 \centering
@@ -88,6 +88,7 @@ sussex_scatterplot
 ```
 
 Figure 2 shows a slight negative correlation between STARS Score and attainment, suggesting that respondents with higher levels of statistical anxiety tend to perform worse. Spearman's correlation coefficient, a measure of the strength and direction of the relationship, was calculated to be -0.17, with a 95% confidence interval of [-0.27, -0.06]. This suggests a statistical significance. 
+
 The correlation coefficient was then converted into Cohen's d to obtain a standardised effect size to allow for comparison of effect sizes across universities and their subsequent pooling through a meta-analysis. The Cohen's d measure calculated to be -0.35, indicates a small to moderate effect size$^{3}$, suggesting that higher levels of statistics anxiety are associated with lower academic attainment at the University of Sussex. 
 
 ## Preliminary analysis continued: Brawijaya University
@@ -96,13 +97,11 @@ Brawijaya University Indonesia was then selected as a further case study, due to
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 7, fig.align="center", fig.cap="Distributions of statistics anxiety and academic attainment at Brawijaya University."}
 brawijaya_histograms()
-
 ```
 Figure 3 shows the distribution of STARS Score is again approximately bell shaped and centered around a mean of 71.2. Most respondents achieved higher grades. The relationship between STARS score and academic attainment was then plotted.
 
 ```{r, echo=FALSE, fig.height = 3, fig.width = 6, fig.cap="Boxplot of attainment vs statistical anxiety at Brawijaya University."}
 brawijaya_relationship
-
 ```
 
 It is not clear to tell if there is a correlation between STARS score and attainment. Spearman's correlation coefficient was calculated to be -0.07, with a 95% confidence interval of [-0.25, 0.12]. This suggests a slight negative correlation, as in Sussex University, but the statistical significance can't be established yet. The Cohen's d was calculated to be -0.14, indicating a very weak negative correlation
@@ -116,17 +115,15 @@ Spearman's rank correlation coefficient was calculated independently for each un
 The correlation coefficients and their corresponding confidence intervals were subsequently converted into Cohen's d to obtain effect size estimates for the meta-analysis.
 
 \begin{table}[H]
-```{r, echo=FALSE, out.width="40%", fig.align='center'}
+```{r, echo=FALSE, out.width="60%", fig.align='center'}
 knitr::include_graphics("effect_size_table.png")
 ```
 \caption{Correlation and effect size information by universities.}
 \end{table}
 
-Table 2 shows that the effect size is only significant in 4 out of 20 university courses, indicating that the results seen in Sussex do not necessarily hold across different universities.
+Table 2 shows that the effect size is only significant at the 95th level in 6 out of 18 universities, so at this point it was not possible to establish a cohesive result for all of the universities. Therefore, a meta-analysis, accounting for sample size, was conducted. This treated each university as a separate study and pooled the individual effect size estimates. 
 
 ## Meta-analysis
-
-To investigate the overall relationship between statistics anxiety and academic attainment, a meta-analysis was conducted, treating each university as a separate study and pooling the individual effect size estimates.
 
 ### Choice of meta-analysis model
 
@@ -134,31 +131,45 @@ There are two main approaches to pooling effect sizes: fixed effect (assumes  th
 
 ### Pooling effect sizes
 
-The standard error of each university's effect size was approximated using the width of its 95% confidence interval. The effect sizes were then pooled using a random-effects model implemented through the metafor package in R.
+The standard error of each university's effect size was approximated using the width of its 95% confidence interval. The effect sizes were then pooled using a random-effects model implemented through the metafor package in R. 
 
 A forest plot was produced to visualise the individual university effect sizes, their corresponding 95% confidence intervals and the overall pooled effect size.
 
-```{r, echo=FALSE, fig.height = 6, fig.width = 5, fig.cap="Forest plot of effect sizes across universities."}
+```{r, echo=FALSE, fig.height = 6, fig.width = 8, fig.cap="Forest plot of effect sizes across universities."}
 meta_forest()
 ```
 
-The pooled effect size was found to be -0.07, with a 95% confidence interval of [-0.26,0.11], based on a total sample of 1,380 respondents across 18 universities. 
+The pooled effect size was found to be -0.29, with a 95% confidence interval of [-0.40,-0.18] and a standard error of 0.06, based on a total sample of 1,380 respondents across 18 universities. 
 
-This does not correspond to a significant association between statistics anxiety and academic attainment across the universities. There is therefore insufficient evidence of an overall association for all universities, despite the relationship being significant at the University of Sussex.
+This suggests a small to moderate statistically significant negative effect, with the confidence interval not containing zero,. This indicates that the data is inconsistent with no association between statistics anxiety and attainment. It may be inferred that there is a correlation between students with higher statistics anxiety and students with lower attainment. 
+
+It can be noted that some universities had very small sample sizes which produced variable estimates, such as the large confidence interval for Macquarie University as seen in Figure 5. These universities were retained as the meta-analysis weights studies with different sample sizes appropriately. 
 
 ### Heterogenity between universities
 
-An $I^2$ value of 47.86% was obtained, indicating moderate heterogeneity between the individual effect size estimates$^4$. The estimated between-study variance was 0.0665. Furthermore, the test for heterogeneity in the random-effects model indicated statistically significant heterogeneity (Q(19) = 34.91, p = 0.01), suggesting that the variation in effect sizes cannot be because of sampling error alone. 
-
-This supports the decision to use a random-effects model and suggests that the relationship between statistics anxiety and academic attainment may vary across universities.
+The test for heterogeneity, diversity between samples, was not statistically significant: $Q(df = 17) = 17.96, p= 0.39$. This indicates that the variation between the surveys in the different universities can be attributed to sampling error rather than true differences between universities, suggesting the negative relationship is consistent across different academic settings.$^4$
 
 # Discussion and limitations
 
-The aim of this analysis was to investigate the relationship between statistics anxiety and academic attainment across multiple universities.
+The aim of this investigation was to establish whether statistics anxiety is associated with academic attainment across universities. Whilst the preliminary analyses of the University of Sussex and Brawijaya University both indicated negative associations of varying degrees, the magnitude of the relationship varied across the wider dataset. The meta-analysis produced a pooled effect size of −0.29, indicating a small to moderate statistically significant negative association. These findings support the initial hypothesis that higher levels of statistics anxiety are associated with lower academic attainment.
 
-[summarise the findings and address the research question, compare fiindings with existing reports] [discuss the consistency of the relationship across universities]
- 
-Limitations made! expand: difference sin grading systems, assumptions made when converting letter-based grades, unequal representations of countries, selection bias through filtering and attention checks, exclusion of 0% grades, differences in demographic and year peole are in by universities, interpretation of anxiety questionaires across languages, assumption of independence between uni effect size estimates, cant establish causal relationship]
+Furthermore, the test for heterogeneity was not statistically significant, suggesting that the observed variation in effect sizes between universities is consistent with sampling error. Despite differences in teaching methods, assessment systems and student characteristics, there was insufficient evidence to suggest that the underlying relationship differed between universities. However, several limitations should be considered when interpreting the findings of this investigation.
+
+One of the main limitations was the difference in grading systems across universities. Some universities used numerical grading methods, whilst others used letter-based grading systems. Although Spearman's rank correlation was used to account for these differences, the use of letter-based grades results in a loss of information compared with numerical grades. Students with different levels of attainment may be awarded the same letter grade and therefore assigned the same rank. This could affect the strength of the observed correlation, particularly when comparing universities with a limited number of grade categories to those using continuous numerical grading systems.
+
+Selection bias may also have been introduced during the data cleaning process. Some universities reported students achieving grades of 0%, which were filtered out. These grades may have been recorded for multiple reasons, such as students genuinely achieving zero or failing to submit an assessment. By excluding these grades, students with particularly low attainment may be underrepresented in the analysis. Additional selection bias may have been introduced by excluding respondents who failed the attention checks or did not fully complete the anxiety questionnaires, as these students may differ systematically from those who were retained.
+
+The universities included in this investigation span multiple continents, with questionnaires completed in seven different languages. The majority of students (67% of respondents) completed the questionnaire in English, whilst only 0.8% of respondents completed it in Hungarian. It could therefore be questioned whether the term 'statistics anxiety' and the individual questionnaire items are interpreted consistently across different languages and cultures.
+
+Furthermore, the number of respondents varied considerably across universities, resulting in some effect size estimates being more precise than others. Although this was accounted for through inverse-variance weighting in the meta-analysis, universities with larger samples generally contributed more towards the pooled effect size. Consequently, the overall findings may not be equally representative of all universities and educational settings included in the investigation.
+
+Respondents were also unevenly distributed across their year of study. Only 8% of respondents were in their third or fourth year of study at the time of completing the survey, with several more not revealing their year of study. With more data on respondents in later years, further investigation could be carried out into whether statistics anxiety differs according to year of study, as students may become more confident in their statistical knowledge as they progress through university.
+
+The analysis did not account for additional variables that may influence both statistics anxiety and academic attainment, such as previous mathematical education, age, gender and degree subject. For example, students with a stronger mathematical background may experience lower levels of statistics anxiety whilst also achieving higher grades. Therefore, the observed relationship may be partially explained by factors other than statistics anxiety itself. Further research could incorporate these variables through multiple regression analysis.
+
+A further limitation arises from the assumptions made during the meta-analysis. The individual survey groups were treated as independent studies, despite some universities contributing multiple survey groups. Students from the same university may share similar educational experiences, potentially challenging the assumption of independence. Furthermore, converting Spearman's rank correlation coefficients into Cohen's d and estimating standard errors from the transformed confidence intervals introduced additional approximations into the analysis.
+
+Finally, whilst the research question investigates the effect of statistics anxiety on attainment, the observational nature of the SMARVUS dataset means that a causal relationship cannot be established. Although higher levels of statistics anxiety may negatively influence academic performance, previous experiences of poor academic performance may also contribute to increased anxiety. Therefore, the findings should be interpreted in terms of association rather tvhan causation.
 
 # Appendix - References
 

@@ -424,29 +424,10 @@ effectsize::r_to_d(r = brawijaya_cor$estimate)
 
 
 ##  Meta-analysis ----------------------------------------------------
+## Calculating effect sizes across universities
 
-### Forest plots
 smarvus_cont <- smarvus_filtered
-smarvus_cont |>
-  filter(survey_id %in% c("brawijaya", "limerick")) |>
-  distinct(survey_id, grade, grade_std)
-cor_func <- function(uni) {
-  d <- smarvus_cont %>% filter(survey_id == uni)
-  test <- correlation::cor_test(d, "grade_std", "stars_score", method = "spearman") #get spearman CIs
-  tibble(survey_id = uni,
-         n    = test$n_Obs,
-         d    = r_to_d(test$rho),
-         low  = r_to_d(test$CI_low),
-         high = r_to_d(test$CI_high))
-}
 
-meta_data <- map_dfr(unique(smarvus_cont$survey_id), cor_func) %>%
-  mutate(se = (high - low) / 3.92)
-
-meta_result <- metafor::rma(d, sei = se, slab = survey_id, data = meta_data)
-meta_forest <- function() {forest(meta_result)}
-
-## Create table of coefficients for the report
 cor_func <- function(uni) {
   d <- smarvus_cont |> filter(survey_id == uni)
   
@@ -457,6 +438,7 @@ cor_func <- function(uni) {
   
   tibble(
     survey_id = uni,
+    university = first(d$university),
     n = test$n_Obs,
     rho = test$rho,
     d = r_to_d(test$rho),
@@ -467,12 +449,29 @@ cor_func <- function(uni) {
 
 meta_data <- map_dfr(unique(smarvus_cont$survey_id), cor_func) |>
   mutate(se = (high - low) / 3.92)
+
+## Meta-analysis and forest plot ---------------------------------------
+
+meta_result <- metafor::rma(
+  d, sei = se,
+  slab = university,
+  data = meta_data
+)
+
+meta_forest <- function() {
+  forest(meta_result,
+         xlab = "Cohen's d",
+         header = "University")
+}
+
+## Create table of coefficients for the report -------------------------
+
 effect_size_table <- meta_data |>
-  select(survey_id, n, rho, d, low, high) |>
+  select(university, n, rho, d, low, high) |>
   arrange(d) |>
   gt() |>
   cols_label(
-    survey_id = "Survey ID",
+    university = "University",
     n = "Sample Size",
     rho = "Spearman's Rho",
     d = "Cohen's d",
@@ -491,4 +490,3 @@ effect_size_table <- meta_data |>
 effect_size_table
 
 gtsave(effect_size_table, "effect_size_table.png")
-
